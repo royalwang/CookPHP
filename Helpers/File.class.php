@@ -123,7 +123,7 @@ class File {
      * @return int
      */
     public static function append($file, $data) {
-        return self::makeDirectory(self::driname($file)) && file_put_contents($path, $data, FILE_APPEND);
+        return self::makeDirectory(self::driname($file)) && file_put_contents($file, $data, FILE_APPEND);
     }
 
     /**
