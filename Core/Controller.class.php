@@ -51,9 +51,7 @@ abstract class Controller extends View {
         if (is_string($info)) {
             $result['info'] = $info;
         }
-        if (!empty($url)) {
-            $result['url'] = $url;
-        }
+       $result['url'] = $url;
         if (!empty($data)) {
             $result['data'] = $data;
         }

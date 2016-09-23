@@ -757,11 +757,12 @@ class Model extends Common {
     /**
      * 新增数据
      * @access public
+     * @param bool  $replace 是否replace新增
      * @param string $table 表
      * @param array  $data 数据
      * @return bool
      */
-    public function save($table = '', $data = []): bool {
+    public function save($replace = false, $table = '', $data = []): bool {
         if (empty($table)) {
             $table = $this->getTableName();
         }
@@ -789,6 +790,7 @@ class Model extends Common {
         $params = [];
         $params = $this->params;
         $params['table'] = $table;
+        $params['replace'] = (bool) $replace;
         $params['fields'] = $k;
         $params['values'] = $v;
         $query = $this->driver->buildStatement($params, $table, 'insert');

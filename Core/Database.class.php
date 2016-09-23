@@ -77,7 +77,7 @@ abstract class Database {
     protected $transaction = false;
     protected $result = null;
     protected $selectSql = 'SELECT %FIELD% FROM %TABLE%%ALIASES%%JOIN%%WHERE%%GROUP%%ORDER%%LIMIT%';
-    protected $insertSql = 'INSERT INTO %TABLE% (%FIELD%) VALUES (%DATA%)';
+    protected $insertSql = '%INSERT% INTO %TABLE% (%FIELD%) VALUES (%DATA%)';
     protected $updateSql = 'UPDATE %TABLE%%ALIASES% SET %SET% %WHERE%';
     protected $deleteSql = 'DELETE %ALIAS% FROM %TABLE% %ALIASES%%WHERE%%LIMIT%';
     protected $createTableSql = "CREATE TABLE %TABLE% (\n%COLUMNS%%INDEXES%)";
@@ -203,6 +203,7 @@ abstract class Database {
             }
         }
         return $this->renderStatement($type, [
+                    'replace' => $query['replace'] ?? false,
                     'conditions' => $this->conditions($query['conditions'] ?? '', true, true),
                     'fields' => $this->fields($query['fields'] ?? ''),
                     'values' => isset($query['values']) ? implode(', ', $query['values']) : '',
@@ -277,7 +278,7 @@ abstract class Database {
                 $values = $data['values'];
                 $values = rtrim($values, ')');
                 $values = ltrim($values, '(');
-                $sql = str_replace(['%TABLE%', '%FIELD%', '%DATA%'], [$data['table'], $data['fields'], $values,], $this->insertSql);
+                $sql = str_replace(['%INSERT%', '%TABLE%', '%FIELD%', '%DATA%'], [$data['replace'] ? 'REPLACE' : 'INSERT', $data['table'], $data['fields'], $values,], $this->insertSql);
                 break;
             case 'update':
                 if (!empty($alias)) {
@@ -548,8 +549,7 @@ abstract class Database {
 
             return $conditions;
         }
-
-        return $this->name($original);
+        return $original;
     }
 
     /**
@@ -685,7 +685,7 @@ abstract class Database {
      */
     public function value($data) {
         if (is_array($data) && !empty($data)) {
-            return implode(',', array_map([$this, 'value'],$data));
+            return implode(',', array_map([$this, 'value'], $data));
         }
         if (is_numeric($data)) {
             return $data;
