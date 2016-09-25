@@ -48,7 +48,7 @@ class Config {
         $keys = explode('.', $key);
         if (count($keys) > 1) {
             if (!self::has($key)) {
-                self::parse([__COOK__ . 'Config' . DS . $keys[0], __COMMON__ . 'Config' . DS . $keys[0], __APP__ . 'Config' . DS . Route::getProject() . DS . $keys[0]], $keys[0], $type);
+                self::parse([__COOK__ . 'Config' . DS . $keys[0], __COMMON__ . 'Config' . DS . $keys[0], __APP__ . Route::getProject() . DS . 'Config' . DS . $keys[0]], $keys[0], $type);
             }
             return self::$_config[$keys[0]][$keys[1]] ?? $default;
         }
