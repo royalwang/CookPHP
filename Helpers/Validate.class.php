@@ -51,16 +51,6 @@ class Validate {
     }
 
     /**
-     * 验证是否是有效网址
-     *
-     * @param string $host
-     * @return bool
-     */
-//    public static function isActiveUrl($host) {
-//        return checkdnsrr($host);
-//    }
-
-    /**
      * 验证是否是有合法的email
      * @access public
      * @param string $email
@@ -69,16 +59,6 @@ class Validate {
     public static function isEmail($email): bool {
         return filter_var($email, FILTER_VALIDATE_EMAIL);
     }
-
-    /**
-     * 验证是否是有效邮箱
-     *
-     * @param string $email
-     * @return bool
-     */
-//    public static function isActiveEmail($email) {
-//        return checkdnsrr($email);
-//    }
 
     /**
      * 验证是否是有合法的IP
@@ -117,7 +97,7 @@ class Validate {
      * @return bool
      */
     public static function isIPLAN($ip): bool {
-        return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANG);
+        return !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE);
     }
 
     /**
