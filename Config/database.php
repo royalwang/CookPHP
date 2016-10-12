@@ -4,7 +4,7 @@
  * 数据库配制
  */
 return[
-    //数据库驱动 Mysqli，Mssql，Pgsql，Sqlite，Db2  PHP7已弃用 mysql
+    //数据库驱动 Mysqli，Mssql，Pgsql，Sqlite，Db2  已弃用 mysql
     'driver' => 'mysqli',
     //是否长连接
     'persistent' => true,
@@ -18,6 +18,8 @@ return[
     'database' => 'cook',
     //表前缀
     'prefix' => 'c_',
+    //数据表引擎
+    'engine' => 'InnoDB',
     //模式
     'schema' => 'public',
     //端口

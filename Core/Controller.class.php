@@ -51,15 +51,23 @@ abstract class Controller extends View {
         if (is_string($info)) {
             $result['info'] = $info;
         }
-       $result['url'] = $url;
+        $result['url'] = $url;
         if (!empty($data)) {
             $result['data'] = $data;
         }
         if (is_array($info)) {
             $result['data'] = $info;
         }
+        $this->showJson($result);
+    }
+
+    /**
+     * 直接输出json
+     * @param mixed $value
+     */
+    protected function showJson($value) {
         header('Content-type:application/json;charset=' . CHARSET);
-        exit(json_encode($result));
+        exit(json_encode($value));
     }
 
     /**

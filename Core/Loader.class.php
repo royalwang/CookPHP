@@ -54,7 +54,7 @@ class Loader {
                 return true;
             }
         }
-        if (in_array($init[0], ['Controller', 'Model', 'Libraries', 'View'])) {
+        if (in_array($init[0], ['Controller', 'Model', 'Libraries', 'Plugin', 'View'])) {
             if (self::requireFile(__APP__ . Route::getProject() . DS . rtrim($init[0] . DS . str_replace('\\', DS, $init[1] ?? null), DS) . '.class.php') || self::requireFile(__COMMON__ . rtrim($init[0] . DS . str_replace('\\', DS, $init[1] ?? null), DS) . '.class.php')) {
                 return true;
             }
@@ -162,7 +162,7 @@ class Loader {
      */
     public static function model($table = null, $config = []) {
         static $_model = [];
-        return $_model[$table] ?? ($_model[$table] = (!empty($table) && class_exists(($newtable = '\\Model\\' . Route::parseName($table, true))) ? Loader::initialize($newtable) : new Model($table ?: null, $config)));
+        return $_model[$table] ?? ($_model[$table] = (!empty($table) && class_exists(($newtable = '\\Model\\' . Route::parseName($table, true))) ? self::initialize($newtable) : new Model($table ?: null, $config)));
     }
 
     /**
@@ -173,7 +173,7 @@ class Loader {
      */
     public static function view($driver = null) {
         static $_view = [];
-        return $_view[$driver] ?? ($_view[$driver] = Loader::initialize(false !== strpos(($_driver = (ucwords($driver) ?: ( ucwords(Config::get('view.driver')) ?: '\\Core\\Engine'))), '\\') ? $_driver : '\\Drivers\\View\\' . $_driver));
+        return $_view[$driver] ?? ($_view[$driver] = self::initialize(false !== strpos(($_driver = (ucwords($driver) ?: ( ucwords(Config::get('view.driver')) ?: '\\Core\\Engine'))), '\\') ? $_driver : '\\Drivers\\View\\' . $_driver));
     }
 
     /**
@@ -239,7 +239,7 @@ class Loader {
      * @return mixed
      */
     public static function helpers($class, $vars = []) {
-        return Loader::initialize('\\Helpers\\' . $class, $vars);
+        return self::initialize('\\Helpers\\' . $class, $vars);
     }
 
     /**
@@ -249,8 +249,19 @@ class Loader {
      * @param array        $vars   变量
      * @return mixed
      */
-    public static function Libraries($class, $vars = []) {
-        return Loader::initialize('\\Libraries\\' . $class, $vars);
+    public static function libraries($class, $vars = []) {
+        return self::initialize('\\Libraries\\' . $class, $vars);
+    }
+
+    /**
+     * 实例Plugin
+     * @access public
+     * @param string    $class
+     * @param array        $vars   变量
+     * @return mixed
+     */
+    public static function plugin($class, $vars = []) {
+        return self::initialize('\\Plugin\\' . $class, $vars);
     }
 
 }

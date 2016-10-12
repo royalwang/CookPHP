@@ -87,7 +87,7 @@ class Validate {
      * @return bool
      */
     public static function isIP($ip): bool {
-        return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6);
+        return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE);
     }
 
     /**
@@ -111,6 +111,16 @@ class Validate {
     }
 
     /**
+     * 验证是否是有合法的私域 IP （比如 192.168.0.1）
+     * @access public
+     * @param string $ip
+     * @return bool
+     */
+    public static function isIPLAN($ip): bool {
+        return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANG);
+    }
+
+    /**
      * 验证是否为浮点数
      * @access public
      * @param string $float
@@ -128,6 +138,16 @@ class Validate {
      */
     public static function isNumber($number): bool {
         return filter_var($number, FILTER_VALIDATE_INT);
+    }
+
+    /**
+     * 验证是数字ＩＤ
+     * @access public
+     * @param int $number 需要被验证的数字
+     * @return bool 如果大于等于0的整数数字返回true，否则返回false
+     */
+    public static function isNumberId($number): bool {
+        return preg_match('/^[1-9][0-9]*$/i', $number);
     }
 
     /**
@@ -181,16 +201,6 @@ class Validate {
     }
 
     /**
-     * 验证是数字ＩＤ
-     * @access public
-     * @param int $number 需要被验证的数字
-     * @return bool 如果大于等于0的整数数字返回true，否则返回false
-     */
-    public static function isNumberId($number): bool {
-        return preg_match('/^[1-9][0-9]*$/i', $number);
-    }
-
-    /**
      * 验证是否是大陆手机号码
      * @access public
      * @param string $phone 待验证的号码
@@ -198,6 +208,57 @@ class Validate {
      */
     public static function isMobilephone($phone): bool {
         return preg_match('/^13[0-9]{1}\d{8}|14[57]{1}\d{8}|15[012356789]{1}\d{8}|17[0678]{1}\d{8}|18[0-9]{1}\d{8}$/', $phone);
+    }
+
+    /**
+     * 检查电话或手机号码
+     * @param  string    $number 
+     * @static
+     * @access public
+     * @return void
+     */
+    public static function isPhone($number) {
+        return self::isTel($number) || self::isMobile($number);
+    }
+
+    /**
+     * 检查电话号码
+     * @param  int    $number 
+     * @static
+     * @access public
+     * @return void
+     */
+    public static function isTel($number) {
+        return preg_match("/^([0-9]{3,4}-)?[0-9]{7,8}$/", $number);
+    }
+
+    /**
+     * 检查手机号码
+     * @param  string    $number 
+     * @static
+     * @access public
+     * @return void
+     */
+    public static function isMobile($number) {
+        return preg_match('/^13[0-9]{1}\d{8}|14[57]{1}\d{8}|15[012356789]{1}\d{8}|17[0678]{1}\d{8}|18[0-9]{1}\d{8}$/', $number);
+    }
+
+    /**
+     * 日期检查
+     * @param  date $date 
+     * @static
+     * @access public
+     * @return bool
+     */
+    public static function isDate($date) {
+        if ($date == '0000-00-00') {
+            return true;
+        }
+        $stamp = strtotime($date);
+        if (!is_numeric($stamp)) {
+            return false;
+        }
+        return checkdate(date('m', $stamp), date('d', $stamp), date('Y', $stamp));
     }
 
     /**

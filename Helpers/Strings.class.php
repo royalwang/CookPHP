@@ -44,15 +44,15 @@ class Strings {
     /**
      * 自动转换字符集 支持数组转换
      * 
-     * @param string $string
-     * @param string $from
-     * @param string $to
+     * @param string|array $string 字符
+     * @param string $from 当前编码
+     * @param string $to 目标编码
      */
-    static public function autoCharset($string, $from = 'gbk', $to = CHARSET) {
+    static public function autoCharset($string, $from = 'gbk', $to = 'utf8') {
         if (strtolower($to) == 'utf8') {
             $to = CHARSET;
         }
-        if (strtolower($from) === strtolower($to) || empty($string) || (is_scalar($string) && !is_string($string))) {
+        if (strtolower($from) === strtolower($to) || empty($string)) {
             return $string;
         }
         if (is_string($string)) {
@@ -88,20 +88,27 @@ class Strings {
      * @param string $suffix 截断显示字符
      * @return string
      */
-    static public function msubstr($str, $start, $length, $charset = "utf-8", $suffix = true) {
-        if (function_exists("mb_substr")) {
-            $slice = mb_substr($str, $start, $length, $charset);
-        } elseif (function_exists('iconv_substr')) {
-            $slice = iconv_substr($str, $start, $length, $charset);
-        } else {
-            $re[CHARSET] = "/[\x01-\x7f]|[\xc2-\xdf][\x80-\xbf]|[\xe0-\xef][\x80-\xbf]{2}|[\xf0-\xff][\x80-\xbf]{3}/";
-            $re['gb2312'] = "/[\x01-\x7f]|[\xb0-\xf7][\xa0-\xfe]/";
-            $re['gbk'] = "/[\x01-\x7f]|[\x81-\xfe][\x40-\xfe]/";
-            $re['big5'] = "/[\x01-\x7f]|[\x81-\xfe]([\x40-\x7e]|\xa1-\xfe])/";
-            preg_match_all($re[$charset], $str, $match);
-            $slice = implode('', array_slice($match[0], $start, $length));
-        }
+    static public function msubstr($str, $start, $length, $charset = CHARSET, $suffix = true) {
+        $re['utf-8'] = "/[\x01-\x7f]|[\xc2-\xdf][\x80-\xbf]|[\xe0-\xef][\x80-\xbf]{2}|[\xf0-\xff][\x80-\xbf]{3}/";
+        $re['gb2312'] = "/[\x01-\x7f]|[\xb0-\xf7][\xa0-\xfe]/";
+        $re['gbk'] = "/[\x01-\x7f]|[\x81-\xfe][\x40-\xfe]/";
+        $re['big5'] = "/[\x01-\x7f]|[\x81-\xfe]([\x40-\x7e]|\xa1-\xfe])/";
+        preg_match_all($re[$charset], $str, $match);
+        $slice = implode('', array_slice($match[0], $start, $length));
         return $suffix && $slice != $str ? $slice . '...' : $slice;
+    }
+
+    /**
+     * 去掉UTF-8 Bom头
+     * @param  string    $string
+     * @access public
+     * @return string
+     */
+    public static function removeUTF8Bom($string) {
+        if (substr($string, 0, 3) == pack('CCC', 239, 187, 191)) {
+            return substr($string, 3);
+        }
+        return $string;
     }
 
 }

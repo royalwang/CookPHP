@@ -24,9 +24,10 @@ class Url {
      * 解析URL
      * @param string $url
      * @param array $params
+     * @param bool $domain 是否显示域名和协议
      * @return string
      */
-    public static function parse(string $url, $params = []): string {
+    public static function parse(string $url, $params = [], $domain = true): string {
         if (self::isUrl($url)) {
             return $url;
         }
@@ -37,7 +38,7 @@ class Url {
                 list($anchor, $array['query']) = explode('?', $anchor, 2);
             }
             if (false !== strpos($anchor, '@')) {
-                list($anchor, $host) = explode('@', $anchor, 2);
+                list($anchor, $hosts) = explode('@', $anchor, 2);
             }
         }
 
@@ -46,10 +47,10 @@ class Url {
         }
 
         $url = !empty($array['path']) ? $array['path'] : Route::getController() . '/' . Route::getAction() . (Config::get('url.htmlsuffix') ? '.' . Config::get('url.htmlsuffix') : '');
-        $domain = Request::host();
+        $host = Request::host();
         if (isset($array['scheme'])) {
             if (Config::get('route.domain')) {
-                $domain = $domain === 'localhost' ? 'localhost' : strtolower($array['scheme']) . strstr($domain, '.');
+                $routeHost = $host === 'localhost' ? 'localhost' : strtolower($array['scheme']) . strstr($host, '.');
             } else {
                 $url = ucfirst(strtolower($array['scheme'])) . '/' . $url;
             }
@@ -74,8 +75,10 @@ class Url {
         if (isset($anchor)) {
             $url .= '#' . $anchor;
         }
-        if (isset($domain)) {
-            $url = Request::scheme() . '://' . $domain . $url;
+        if (isset($routeHost)) {
+            $url = '//' . $domain . $url;
+        } else {
+            $url = ($domain ? Request::domain() : '') . $url;
         }
         return $url;
     }
@@ -83,7 +86,7 @@ class Url {
     /**
      * 返回完整URL 不含 Request::baseFile()和后缀
      * @param string $url
-     * @param bool $domain
+     * @param bool $domain 是否显示域名和协议
      * @return string
      */
     public static function base(string $url, $domain = true): string {
@@ -91,9 +94,7 @@ class Url {
             return $url;
         }
         $url = Request::root() . '/' . ltrim($url, '/');
-        if (!empty($domain)) {
-            $url = Request::scheme() . '://' . ($domain === true ? Request::host() : $domain) . $url;
-        }
+        $url = ($domain ? Request::domain() : '') . $url;
         return $url;
     }
 

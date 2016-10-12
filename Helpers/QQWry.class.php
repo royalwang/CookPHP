@@ -16,7 +16,7 @@ namespace Helpers;
 
 use \Core\Loader;
 
-defined('__QQWRY__') or define('__QQWRY__', __COOK__ . 'Data' . DS . 'qqwry.dat');
+defined('__QQWRY__') or define('__QQWRY__', __COOK__ . 'Data' . DS . 'Ip' . DS . 'qqwry.dat');
 
 /**
  * QQ纯真IP类
@@ -48,7 +48,7 @@ class QQWry {
             $ip = \Core\Request::ip();
         }
         if (!Validate::isIP4($ip)) {
-            return 'IP Error';
+            return 'n/a';
         }
         $_info[$ip] = Loader::initialize('\\Core\\Cache')->remember((string) $ip, function () use ($ip) {
             return self::convertip($ip);
@@ -63,7 +63,7 @@ class QQWry {
         $ipAddr2 = "";
         $datPath = __QQWRY__;
         if (!$fd = @fopen($datPath, 'rb')) {
-            return 'IP Error';
+            return 'n/a';
         }
         $_ip = explode('.', $ip);
         $ipNum = $_ip[0] * 16777216 + $_ip[1] * 65536 + $_ip[2] * 256 + $_ip[3];
@@ -86,7 +86,7 @@ class QQWry {
             $ipData1 = fread($fd, 4);
             if (strlen($ipData1) < 4) {
                 fclose($fd);
-                return 'IP Error';
+                return 'n/a';
             }
             $ip1num = implode('', unpack('L', $ipData1));
             if ($ip1num < 0) {
@@ -100,14 +100,14 @@ class QQWry {
             $DataSeek = fread($fd, 3);
             if (strlen($DataSeek) < 3) {
                 fclose($fd);
-                return 'IP Error';
+                return 'n/a';
             }
             $DataSeek = implode('', unpack('L', $DataSeek . chr(0)));
             fseek($fd, $DataSeek);
             $ipData2 = fread($fd, 4);
             if (strlen($ipData2) < 4) {
                 fclose($fd);
-                return 'IP Error';
+                return 'n/a';
             }
             $ip2num = implode('', unpack('L', $ipData2));
             if ($ip2num < 0) {
@@ -116,7 +116,7 @@ class QQWry {
             if ($ip2num < $ipNum) {
                 if ($Middle == $BeginNum) {
                     fclose($fd);
-                    return 'Unknown';
+                    return 'n/a';
                 }
                 $BeginNum = $Middle;
             }
@@ -126,7 +126,7 @@ class QQWry {
             $ipSeek = fread($fd, 3);
             if (strlen($ipSeek) < 3) {
                 fclose($fd);
-                return 'IP Error';
+                return 'n/a';
             }
             $ipSeek = implode('', unpack('L', $ipSeek . chr(0)));
             fseek($fd, $ipSeek);
@@ -136,14 +136,14 @@ class QQWry {
             $AddrSeek = fread($fd, 3);
             if (strlen($AddrSeek) < 3) {
                 fclose($fd);
-                return 'IP Error';
+                return 'n/a';
             }
             $ipFlag = fread($fd, 1);
             if ($ipFlag == chr(2)) {
                 $AddrSeek2 = fread($fd, 3);
                 if (strlen($AddrSeek2) < 3) {
                     fclose($fd);
-                    return 'IP Error';
+                    return 'n/a';
                 }
                 $AddrSeek2 = implode('', unpack('L', $AddrSeek2 . chr(0)));
                 fseek($fd, $AddrSeek2);
@@ -168,7 +168,7 @@ class QQWry {
                 $AddrSeek2 = fread($fd, 3);
                 if (strlen($AddrSeek2) < 3) {
                     fclose($fd);
-                    return 'IP Error';
+                    return 'n/a';
                 }
                 $AddrSeek2 = implode('', unpack('L', $AddrSeek2 . chr(0)));
                 fseek($fd, $AddrSeek2);
@@ -189,7 +189,7 @@ class QQWry {
         $ipaddr = preg_replace('/^s*/is', '', $ipaddr);
         $ipaddr = preg_replace('/s*$/is', '', $ipaddr);
         if (preg_match('/http/i', $ipaddr) || $ipaddr == '') {
-            $ipaddr = 'Unknown';
+            $ipaddr = 'n/a';
         }
         list($region, $address) = preg_split('/\s+/', $ipaddr);
         preg_match("/(.*省)?(.*市)?(.*县)?(.*区)?(.*?)/", $region, $match);

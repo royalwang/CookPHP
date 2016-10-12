@@ -196,11 +196,11 @@ class Request {
     /**
      * 获取当前包含协议的域名
      * @access public
-     * @param string $domain 域名
+     * @param string $auto 是否自动协议
      * @return string
      */
-    public static function domain(): string {
-        return self::scheme() . '://' . self::host();
+    public static function domain($auto = true): string {
+        return ($auto ? '//' : self::scheme() . '://') . self::host();
     }
 
     /**

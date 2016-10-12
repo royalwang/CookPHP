@@ -254,13 +254,26 @@ class Engine extends Common {
     private $_preg, $_replace, $_left, $_right;
 
     /**
+     * 去掉UTF-8 Bom头
+     * @param  string    $string
+     * @access public
+     * @return string
+     */
+    private function removeUTF8Bom($string) {
+        if (substr($string, 0, 3) == pack('CCC', 239, 187, 191)) {
+            return substr($string, 3);
+        }
+        return $string;
+    }
+
+    /**
      * 编译
      * @access private
      * @param string $template
      * @param string $compileFile
      */
     private function compile(string $template, string $compileFile) {
-        $content = trim(file_get_contents($template));
+        $content = trim($this->removeUTF8Bom(file_get_contents($template)));
         $this->_left = '(?<!!)' . $this->stripPreg($this->left);
         $this->_right = '((?<![!]))' . $this->stripPreg($this->right);
         if ($this->layout) {

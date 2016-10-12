@@ -113,8 +113,19 @@ abstract class Common {
      * @param array        $vars   变量
      * @return mixed
      */
-    protected function Libraries($class, $vars = []) {
-        return Loader::Libraries($class, $vars);
+    protected function libraries($class, $vars = []) {
+        return Loader::libraries($class, $vars);
+    }
+
+    /**
+     * 实例Plugin
+     * @access public
+     * @param string    $class
+     * @param array        $vars   变量
+     * @return mixed
+     */
+    public static function plugin($class, $vars = []) {
+        return Loader::plugin($class, $vars);
     }
 
 }

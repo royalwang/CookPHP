@@ -24,6 +24,8 @@ class Model extends Common {
     protected $connected = false;
     protected $config = [];
     protected $prefix;
+    protected $engine;
+    protected $charset;
     protected $table;
     protected $driver;
     protected $params;
@@ -46,6 +48,8 @@ class Model extends Common {
         $this->config = !empty($this->config) ? array_merge($this->config, $config) : $config;
         $this->cache = $this->config['cache'] ?? false;
         $this->prefix = $this->config['prefix'] ?? '';
+        $this->engine = $this->config['engine'] ?? '';
+        $this->charset = $this->config['charset'] ?? '';
         return $this;
     }
 
@@ -397,7 +401,7 @@ class Model extends Common {
      * @return
      */
     public function query(string $sql) {
-        $sql = str_replace('#__', $this->prefix, $sql);
+        $sql = $this->strSql($sql);
         //preg_match("/^(insert|delete|update|replace|drop|create)\s+/i", $query)
         //preg_match("/^(insert|replace)\s+/i", $query)
         $this->params = [];
@@ -460,6 +464,18 @@ class Model extends Common {
     }
 
     /**
+     * 替换SQl字符表达
+     * @param string $string
+     * @return string
+     */
+    public function strSql($string) {
+        $string = str_replace('#__PREFIX__#', $this->prefix, $string);
+        $string = str_replace('#__ENGINE__#', $this->engine, $string);
+        $string = str_replace('#__CHARSET__#', $this->charset, $string);
+        return trim($string);
+    }
+
+    /**
      * SQL查询
      * @access public
      * @param string     $sql 完整的SQL
@@ -468,7 +484,7 @@ class Model extends Common {
      * @return array
      */
     public function fetch($sql = null, $duration = '', $name = null): array {
-        $sql = str_replace('#__', $this->prefix, $sql ?: $this->driver->buildStatement($this->params, $this->getTableName()));
+        $sql = $this->strSql($sql ?: $this->driver->buildStatement($this->params, $this->getTableName()));
         if ($this->cache === false || $duration === null) {
             return $this->fetchFromDb($sql);
         }
