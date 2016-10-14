@@ -6,7 +6,7 @@
  * @name CookPHP framework
  * @package CookPHP
  * @author CookPHP <admin@cookphp.org>
- * @version 1.0 Beta
+ * @version 0.0.1 Beta
  * @link http://www.cookphp.org
  * @copyright cookphp.org
  * @license <a href="http://www.cookphp.org">CookPHP</a>
@@ -19,7 +19,7 @@ use \Core\Config;
 /**
  * Cookie处理类
  *
- * @author 费尔 <admin@xuai.cn>
+ * @author 费尔 <admin@cookphp.org>
  */
 class Cookie {
 
@@ -49,11 +49,11 @@ class Cookie {
      * @param array $option
      */
     public static function set($name, $value = '', $option = []) {
-        $expire = !empty(self::$config['expire']) ? time() + intval(self::$config['expire']) : 0;
+        $lifetime = !empty(self::$config['lifetime']) ? time() + intval(self::$config['lifetime']) : 0;
         if (is_array($value)) {
             $value = 'cookphp:' . json_encode(array_map('urlencode', $value));
         }
-        self::edit($name, $value, $expire, $option);
+        self::edit($name, $value, $lifetime, $option);
         $_COOKIE[$name] = $value;
     }
 
@@ -90,9 +90,9 @@ class Cookie {
      * @access private
      * @param array $option
      */
-    private static function edit($name, $value = "", $expire = 0, $option = []) {
+    private static function edit($name, $value = "", $lifetime = 0, $option = []) {
         self::init($option);
-        setcookie($name, $value, $expire, self::$config['path'], self::$config['domain'], self::$config['secure'], self::$config['httponly']);
+        setcookie($name, $value, $lifetime, self::$config['path'], self::$config['domain'], self::$config['secure'], self::$config['httponly']);
     }
 
     /**
@@ -103,7 +103,7 @@ class Cookie {
     private static function init($option = []) {
         if (empty(self::$config)) {
             self::$config = [
-                'expire' => $option['expire'] ?? Config::get('cookie.lifetime'),
+                'lifetime' => $option['lifetime'] ?? Config::get('cookie.lifetime'),
                 'path' => $option['path'] ?? Config::get('cookie.path'),
                 'domain' => $option['domain'] ?? Config::get('cookie.domain'),
                 'secure' => $option['secure'] ?? Config::get('cookie.secure'),

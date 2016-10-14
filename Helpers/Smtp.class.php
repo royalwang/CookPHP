@@ -6,7 +6,7 @@
  * @name CookPHP framework
  * @package CookPHP
  * @author CookPHP <admin@cookphp.org>
- * @version 1.0 Beta
+ * @version 0.0.1 Beta
  * @link http://www.cookphp.org
  * @copyright cookphp.org
  * @license <a href='http://www.cookphp.org'>CookPHP</a>
@@ -19,7 +19,7 @@ use \Core\Config;
 /**
  * 邮箱发送类
  *
- * @author 费尔 <admin@xuai.cn>
+ * @author 费尔 <admin@cookphp.org>
  * @example
  * $mail = new \Helpers\Smtp();
  * $mail->setServer("XXXXX", "XXXXX@XXXXX", "XXXXX"); //设置smtp服务器

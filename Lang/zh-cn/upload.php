@@ -6,7 +6,7 @@
  * @name CookPHP framework
  * @package CookPHP
  * @author CookPHP <admin@cookphp.org>
- * @version 1.0 Beta
+ * @version 0.0.1 Beta
  * @link http://www.cookphp.org
  * @copyright cookphp.org
  * @license <a href="http://www.cookphp.org">CookPHP</a>
@@ -17,6 +17,8 @@ return[
     'file_exceeds_form_limit' => '上传文件的大小超过表单中指定的最大大小。',
     'file_partial' => '文件仅上传了一部分。  .',
     'no_temp_directory' => '无法找到临时文件夹。  .',
+    'unknown' => '未知错误。',
+    'try_again' => '文件上件出错。 请重试。',
     'unable_to_write_file' => '无法写入文件。.',
     'stopped_by_extension' => '文件上传被扩展停止。  ',
     'no_file_selected' => '没有选择要上传的文件。  ',
@@ -27,5 +29,6 @@ return[
     'no_filepath' => '上传路径无效。',
     'no_file_types' => '指定允许的文件类型。',
     'bad_filename' => '提交的文件名已经存在。',
-    'not_writable' => '上传的目的路径不可写。'
+    'not_writable' => '上传的目的路径不可写。',
+    'file_naming_errors' => '文件命名规则错误！'
 ];

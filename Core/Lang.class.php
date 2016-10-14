@@ -6,7 +6,7 @@
  * @name CookPHP Framework
  * @package CookPHP
  * @author CookPHP <admin@cookphp.org>
- * @version 1.0 Beta
+ * @version 0.0.1 Beta
  * @link http://www.cookphp.org
  * @copyright cookphp.org
  * @license <a href="http://www.cookphp.org">CookPHP</a>
@@ -82,7 +82,11 @@ class Lang {
      * @param string $key
      * @return mixed
      */
-    public static function all($key = null) {
+    public static function all($key = null, $type = 'php') {
+        if (!isset(self::$_lang[$key])) {
+            $language = Config::get('lang.language');
+            self::parse([__COOK__ . 'Lang' . DS . $language . DS . $key, __COMMON__ . 'Lang' . DS . $language . DS . $key, __APP__ . Route::getProject() . DS . 'Lang' . DS . $language . DS . $key], $key, $type);
+        }
         return !$key ? self::$_lang : (self::$_lang[$key] ?? null);
     }
 

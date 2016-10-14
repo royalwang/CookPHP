@@ -6,7 +6,7 @@
  * @name SmartPHP framework
  * @package SmartPHP
  * @author 费尔 <admin@smartphp.cn>
- * @version 1.0 Beta
+ * @version 0.0.1 Beta
  * @link http://www.smartphp.cn
  * @copyright smartphp.cn
  * @license <a href="http://www.smartphp.cn">smartphp</a>

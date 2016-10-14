@@ -2,13 +2,7 @@
 
 define('START_TIME', microtime(true));
 define('START_MEMORY', memory_get_usage());
-define('COOK_VERSION', '1.0.0');
-if (empty($_GET) && empty($_POST) && !empty($_SERVER['argv'][1])) {
-    parse_str($_SERVER['argv'][1], $_GET);
-    parse_str($_SERVER['argv'][1], $_REQUEST);
-    define('IS_CLI', true);
-}
-defined('IS_CLI') or define('IS_CLI', false);
+define('COOK_VERSION', '0.0.1');
 defined('APP_DEBUG') or define('APP_DEBUG', false);
 defined('CHARSET') or define('CHARSET', 'utf-8');
 defined('DS') or define('DS', DIRECTORY_SEPARATOR);
@@ -20,3 +14,12 @@ defined('__STORAGE__') or define('__STORAGE__', __COMMON__ . 'Runtime' . DS . 'S
 defined('__TMP__') or define('__TMP__', __STORAGE__ . 'Tmp' . DS);
 defined('__CACHE__') or define('__CACHE__', __STORAGE__ . 'Cache' . DS);
 defined('__LOGS__') or define('__LOGS__', __STORAGE__ . 'Logs' . DS);
+
+if (empty($_GET) && empty($_POST) && isset($_SERVER['argv'][1])) {
+    if (isset($_SERVER['argv'][2])) {
+        parse_str($_SERVER['argv'][2], $_GET);
+        parse_str($_SERVER['argv'][2], $_REQUEST);
+    }
+    defined('IS_CLI') or define('IS_CLI', true);
+}
+defined('IS_CLI') or define('IS_CLI', false);
