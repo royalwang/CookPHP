@@ -80,6 +80,9 @@ class Route {
             self::$_controller = ucfirst(strtolower($project));
         }
         self::$_action = strtolower(strip_tags(!empty(($action = array_shift($array))) ? $action : Config::get('route.action')));
+        define('APP_PROJECT', self::getProject());
+        define('APP_CONTROLLER', self::getController());
+        define('APP_ACTION', self::getAction());
         if (!empty($array)) {
             self::parseVar($array);
         }

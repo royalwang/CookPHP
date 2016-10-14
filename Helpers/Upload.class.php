@@ -168,7 +168,7 @@ class Upload {
             /* 调用回调函数检测文件是否存在 */
             if ($this->callback && ($data = call_user_func($this->callback, $file))) {
                 if (file_exists('.' . $data['path'])) {
-                    $info[$key] = $data;
+                    $info[] = $data;
                     continue;
                 } elseif ($this->removetrash) {
                     call_user_func($this->removetrash, $data); //删除垃圾据
@@ -204,7 +204,7 @@ class Upload {
             /* 保存文件 并记录保存成功的文件 */
             if ($this->uploader->save($file, $this->replace)) {
                 unset($file['error'], $file['tmp_name']);
-                $info[$key] = $file;
+                $info[] = $file;
             } else {
                 $this->error = $this->uploader->getError();
             }
@@ -288,7 +288,6 @@ class Upload {
         }
 
         /* 检查文件Mime类型 */
-        //TODO:FLASH上传的文件获取到的mime类型都为application/octet-stream
         if (!$this->checkMime($file['type'])) {
             $this->error = $this->lang['invalid_filetype'];
             return false;
