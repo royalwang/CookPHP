@@ -1,0 +1,19 @@
+{
+    "name": "CookPHP",
+    "type": "framework",
+    "version": "v0.0.1-dev",
+    "description": "CookPHP Framework",
+    "keywords": ["framework", "CookPHP", "Cook"],
+    "homepage": "http://CookPHP.org/",
+    "license": "Apache2",
+    "authors": [
+        {
+            "name": "CookPHP",
+            "email": "admin@CookPHP.org"
+        }
+    ],
+    "require": {
+        "php": ">=7.0"
+    },
+    "minimum-stability": "dev"
+}

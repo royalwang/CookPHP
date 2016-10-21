@@ -30,6 +30,7 @@ class Model extends Common {
     protected $driver;
     protected $params;
     protected $data;
+    protected $partition = [];
     private static $_driver = [];
 
     public function __construct($table = null, $config = []) {
@@ -473,6 +474,50 @@ class Model extends Common {
         $string = str_replace('#__ENGINE__#', $this->engine, $string);
         $string = str_replace('#__CHARSET__#', $this->charset, $string);
         return trim($string);
+    }
+
+    /**
+     * 得到分表的的数据表名
+     * @access public
+     * @param array $data 操作的数据
+     * @return string
+     */
+    public function getPartitionTableName($field = '', $type = '', $num = '') {
+        if (empty($field)) {
+            $field = $this->partition['field'] ?? '';
+        }
+        if (empty($type)) {
+            $type = $this->partition['type'] ?? '';
+        }
+        if (empty($num)) {
+            $num = $this->partition['num'] ?? '';
+        }
+        switch ($type) {
+            case 'year':
+                // 按照年份分表
+                if (!is_numeric($field)) {
+                    $field = strtotime($field);
+                }
+                $seq = date('Y', $field);
+                break;
+            case 'mod':
+                // 按照id的模数分表
+                $seq = ($field % $num) + 1;
+                break;
+            case 'md5':
+                // 按照md5的序列分表
+                $seq = (ord(substr(md5($field), 0, 1)) % $num) + 1;
+                break;
+            default :
+                if (function_exists($type)) {
+                    // 支持指定函数哈希
+                    $seq = (ord(substr($type($field), 0, 1)) % $num) + 1;
+                } else {
+                    // 按照字段的首字母的值分表
+                    $seq = (ord($field{0}) % $num) + 1;
+                }
+        }
+        return $this->getTableName() . '_' . $seq;
     }
 
     /**

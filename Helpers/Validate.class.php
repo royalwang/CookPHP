@@ -212,16 +212,6 @@ class Validate {
         return preg_match("/^([0-9]{3,4}-)?[0-9]{7,8}$/", $number);
     }
 
-    /**
-     * 检查手机号码
-     * @param  string    $number 
-     * @static
-     * @access public
-     * @return void
-     */
-    public static function isMobile($number) {
-        return preg_match('/^13[0-9]{1}\d{8}|14[57]{1}\d{8}|15[012356789]{1}\d{8}|17[0678]{1}\d{8}|18[0-9]{1}\d{8}$/', $number);
-    }
 
     /**
      * 日期检查
