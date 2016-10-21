@@ -160,7 +160,7 @@ class Model extends Common {
      * @return $this
      */
     public function table(string $string = '') {
-        $this->params['table'] = $string ?: $this->prefix . $this->table;
+        $this->params['table'] = $this->prefix . ($string ?: $this->table);
         return $this;
     }
 
@@ -502,22 +502,23 @@ class Model extends Common {
                 break;
             case 'mod':
                 // 按照id的模数分表
-                $seq = ($field % $num) + 1;
+                $seq = ($field % $num);
                 break;
             case 'md5':
                 // 按照md5的序列分表
-                $seq = (ord(substr(md5($field), 0, 1)) % $num) + 1;
+                $seq = (ord(substr(md5($field), 0, 1)) % $num);
                 break;
             default :
                 if (function_exists($type)) {
                     // 支持指定函数哈希
-                    $seq = (ord(substr($type($field), 0, 1)) % $num) + 1;
+                    $seq = (ord(substr($type($field), 0, 1)) % $num);
                 } else {
                     // 按照字段的首字母的值分表
-                    $seq = (ord($field{0}) % $num) + 1;
+                    $seq = (ord($field{0}) % $num);
                 }
         }
-        return $this->getTableName() . '_' . $seq;
+        $this->table($this->table . '_' . $seq);
+        return $this;
     }
 
     /**
@@ -559,6 +560,18 @@ class Model extends Common {
         return $this->cache($this->config['cachedriver'] ?? 'file')->remember((string) $key, function () use ($sql) {
                     return $this->fetchFromDb($sql);
                 }, (int) $duration);
+    }
+
+    /**
+     * SQL查询
+     * @access public
+     * @param string     $sql 完整的SQL
+     * @param int|string $duration  缓存时间   null时不缓存
+     * @param string     缓存名称，默认 md5($sql)
+     * @return array
+     */
+    public function read($sql = null, $duration = '', $name = null): array {
+        return $this->fetch($sql, $duration, $name);
     }
 
     /**
@@ -859,6 +872,18 @@ class Model extends Common {
     }
 
     /**
+     * 新增数据
+     * @access public
+     * @param bool  $replace 是否replace新增
+     * @param string $table 表
+     * @param array  $data 数据
+     * @return bool
+     */
+    public function create($replace = false, $table = '', $data = []): bool {
+        return $this->save($replace, $table, $data);
+    }
+
+    /**
      * 更新数数据
      * @access public
      * @param string $table 表
@@ -903,36 +928,6 @@ class Model extends Common {
         $params['values'] = $k;
         $query = $this->driver->buildStatement($params, $params['table'], 'update');
         return $this->query($query);
-    }
-
-    /**
-     * 自动新增或更新数据
-     * 如果数据存在则更新操作
-     * @access public
-     * @param string $table 表
-     * @param array  $conditions 条件表达
-     *  @param array  $details limit表达
-     * @return bool
-     */
-    public function cascade($table = '', $data = [], $conditions = [], $details = []) {
-        if (empty($table)) {
-            $table = $this->getTableName();
-        }
-        if (empty($data)) {
-            $data = $this->data;
-        }
-        if (empty($conditions)) {
-            $conditions = $this->params['conditions'] ?? [];
-        }
-        $rows = $this->find($table, 'count', [
-            'conditions' => $conditions,
-        ]);
-        if ($rows > 0) {
-            return $this->update($table, $data, $conditions, $details);
-        }
-        if (count(array_filter($data))) {
-            return $this->save($table, $data, $details);
-        }
     }
 
     /**

@@ -99,6 +99,37 @@ class Strings {
     }
 
     /**
+     * 产生随机字串
+     * @param string $len 长度
+     * @param string $type 字串类型 0 字母 1 数字 其它 混合
+     * @return string
+     */
+    static public function randString($len = 6, $type = '') {
+        switch ($type) {
+            case 0 :
+                $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+                break;
+            case 1 :
+                $chars = str_repeat('012356789', 3);
+                break;
+            case 2 :
+                $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                break;
+            case 3 :
+                $chars = 'abcdefghijklmnopqrstuvwxyz';
+                break;
+            default :
+                $chars = 'ABCDEFGHIJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz2356789';
+                break;
+        }
+        if ($len > 10) {
+            $chars = $type == 1 ? str_repeat($chars, $len) : str_repeat($chars, 5);
+        }
+        $chars = str_shuffle($chars);
+        return substr($chars, 0, $len);
+    }
+
+    /**
      * 去掉UTF-8 Bom头
      * @param  string    $string
      * @access public
