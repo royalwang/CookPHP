@@ -72,21 +72,37 @@ class Route {
      */
     private static function initController() {
         $array = Url::explode(Request::path());
-        self::$_project = Config::get('route.domain') ? ucfirst(strtolower(preg_match('/^[A-Za-z](\/|\.|\w)*$/', ($host = strstr(Request::host(), '.', true))) ? ($host !== 'www' ? $host : Config::get('route.project')) : Config::get('route.project'))) : ucfirst(strtolower(strip_tags(!empty(($project = array_shift($array))) ? $project : Config::get('route.project'))));
-        if (is_dir(__APP__ . self::$_project)) {
-            self::$_controller = ucfirst(strtolower(strip_tags(!empty(($controller = array_shift($array))) ? $controller : Config::get('route.controller'))));
-        } else {
+        self::$_project = Config::get('route.domain') ? $this->initDomain() : ucfirst(strtolower(strip_tags(!empty(($project = array_shift($array))) ? $project : Config::get('route.project'))));
+        if (!is_dir(__APP__ . self::$_project)) {
             self::$_project = ucfirst(strtolower(Config::get('route.project')));
-            self::$_controller = ucfirst(strtolower($project));
         }
+        self::$_controller = ucfirst(strtolower(strip_tags(!empty(($controller = array_shift($array))) ? $controller : Config::get('route.controller'))));
         self::$_action = strtolower(strip_tags(!empty(($action = array_shift($array))) ? $action : Config::get('route.action')));
-        define('APP_PROJECT', self::getProject());
-        define('APP_CONTROLLER', self::getController());
-        define('APP_ACTION', self::getAction());
+        defined('APP_PROJECT') or define('APP_PROJECT', self::getProject());
+        defined('APP_CONTROLLER') or define('APP_CONTROLLER', self::getController());
+        defined('APP_ACTION') or define('APP_ACTION', self::getAction());
         if (!empty($array)) {
             self::parseVar($array);
         }
         (!preg_match('/^[A-Za-z](\/|\.|\w)*$/', self::$_project) || !preg_match('/^[A-Za-z](\/|\.|\w)*$/', self::$_controller) || !preg_match('/^[A-Za-z](\w)*$/', self::$_action)) && Error::show('The URI you submitted has disallowed characters.', 400);
+    }
+
+    /**
+     * 域名绑定项目
+     */
+    private static function initDomain() {
+        $project = '';
+        //if (!empty(Config::get('route.domainlist'))) {
+        $host = Request::host();
+        if (false !== strpos($host, '.')) {
+            $host = strstr($host, '.', true);
+            $project = Config::get('route.domainlist')[$host] ?? '';
+        } else {
+            $project = Config::get('route.domainlist')[$host] ?? '';
+        }
+        // }
+        self::$_project = ucfirst(strtolower(preg_match('/^[A-Za-z](\/|\.|\w)*$/', $project) ? $project : Config::get('route.project')));
+        return self::$_project;
     }
 
     /**

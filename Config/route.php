@@ -16,4 +16,8 @@ return [
     'pathinfodepr' => '/',
     //子域名模式
     'domain' => false,
+    //域名绑定项目
+    'domainlist'=>[
+        
+    ]
 ];
