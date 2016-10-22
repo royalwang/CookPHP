@@ -18,7 +18,6 @@ use \Core\Config;
 
 /**
  * Cookie处理类
- *
  * @author 费尔 <admin@cookphp.org>
  */
 class Cookie {

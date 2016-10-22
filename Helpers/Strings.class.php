@@ -122,7 +122,7 @@ class Strings {
                 $chars = 'ABCDEFGHIJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz2356789';
                 break;
         }
-        if ($len > 10) {
+        if ($len > 9) {
             $chars = $type == 1 ? str_repeat($chars, $len) : str_repeat($chars, 5);
         }
         $chars = str_shuffle($chars);
